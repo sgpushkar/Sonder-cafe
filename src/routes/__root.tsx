@@ -6,7 +6,49 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 
+import cafeHero from "@/assets/cafe-hero.jpg";
 import appCss from "../styles.css?url";
+
+const siteUrl = (
+  import.meta.env.VITE_SITE_URL || "https://sonder-cafe.vercel.app"
+).replace(/\/$/, "");
+const cafeHeroUrl = `${siteUrl}${cafeHero.startsWith("/") ? cafeHero : `/${cafeHero}`}`;
+
+const cafeStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "CafeOrCoffeeShop",
+  name: "Sonder Cafe",
+  url: siteUrl,
+  image: cafeHeroUrl,
+  description:
+    "A quiet cafe in Bandra serving slow coffee, honey croissants, and rainy afternoons.",
+  telephone: "+91 98200 00000",
+  priceRange: "Rs. 160 - Rs. 340",
+  servesCuisine: ["Coffee", "Tea", "Bakery", "Dessert"],
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "12 Bandra Lane",
+    addressLocality: "Mumbai",
+    addressRegion: "Maharashtra",
+    addressCountry: "IN",
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+      opens: "07:00",
+      closes: "23:00",
+    },
+  ],
+};
 
 function NotFoundComponent() {
   return (
@@ -37,14 +79,34 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sonder Cafe" },
+      { title: "Sonder Cafe | Slow Coffee in Bandra, Mumbai" },
       {
         name: "description",
-        content: "A quiet cafe. Slow coffee. Stay a little longer.",
+        content:
+          "Sonder Cafe is a quiet Bandra cafe serving slow coffee, tea, honey croissants, bakery bites, and rainy afternoon atmosphere from 7 am to 11 pm.",
       },
+      { name: "robots", content: "index, follow" },
+      {
+        name: "keywords",
+        content:
+          "Sonder Cafe, Bandra cafe, Mumbai coffee shop, slow coffee, honey croissant, cafe in Bandra",
+      },
+      { name: "author", content: "Sonder Cafe" },
+      { name: "theme-color", content: "#1c120c" },
+      { property: "og:site_name", content: "Sonder Cafe" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: siteUrl },
+      { property: "og:locale", content: "en_IN" },
+      { name: "twitter:site", content: "@sondercafe" },
     ],
     links: [
+      { rel: "canonical", href: siteUrl },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -61,6 +123,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(cafeStructuredData),
+          }}
+        />
       </head>
       <body>
         {children}

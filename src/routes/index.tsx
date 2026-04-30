@@ -10,24 +10,44 @@ import momentCups from "@/assets/moment-cups.jpg";
 import momentUmbrella from "@/assets/moment-umbrella.jpg";
 import momentNotebook from "@/assets/moment-notebook.jpg";
 
+const siteUrl = (
+  import.meta.env.VITE_SITE_URL || "https://sonder-cafe.vercel.app"
+).replace(/\/$/, "");
+const cafeHeroUrl = `${siteUrl}${cafeHero.startsWith("/") ? cafeHero : `/${cafeHero}`}`;
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sonder Cafe - Stay a little longer" },
+      { title: "Sonder Cafe | Slow Coffee, Croissants & Rainy Afternoons" },
       {
         name: "description",
         content:
-          "A quiet cafe in Bandra serving slow coffee, honey croissants, and rainy afternoons. Open 7am - 11pm, every day.",
+          "Visit Sonder Cafe in Bandra for slow coffee, masala chai, honey croissants, bakery bites, and a quiet rainy-day atmosphere. Open 7 am - 11 pm daily.",
       },
-      { property: "og:title", content: "Sonder Cafe - Stay a little longer" },
+      {
+        property: "og:title",
+        content: "Sonder Cafe | Slow Coffee in Bandra, Mumbai",
+      },
       {
         property: "og:description",
-        content: "Slow coffee, soft mornings, and the sound of rain on glass.",
+        content:
+          "Slow coffee, soft mornings, honey croissants, and the sound of rain on glass.",
       },
-      { property: "og:image", content: cafeHero },
-      { name: "twitter:image", content: cafeHero },
+      { property: "og:image", content: cafeHeroUrl },
+      {
+        property: "og:image:alt",
+        content: "Sonder Cafe interior at night through a rain-streaked window",
+      },
+      { name: "twitter:title", content: "Sonder Cafe | Stay a little longer" },
+      {
+        name: "twitter:description",
+        content:
+          "A quiet Bandra cafe for slow coffee, tea, croissants, and rainy afternoons.",
+      },
+      { name: "twitter:image", content: cafeHeroUrl },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: siteUrl }],
   }),
   component: Index,
 });
