@@ -9,6 +9,7 @@ import momentWindow from "@/assets/moment-window.jpg";
 import momentCups from "@/assets/moment-cups.jpg";
 import momentUmbrella from "@/assets/moment-umbrella.jpg";
 import momentNotebook from "@/assets/moment-notebook.jpg";
+import rainyCafeVibes from "@/assets/rainy-cafe-vibes.mp3";
 
 const siteUrl = (
   import.meta.env.VITE_SITE_URL || "https://sonder-cafe.vercel.app"
@@ -147,9 +148,10 @@ function useRain(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
 }
 
 function useAmbient() {
-  const [active, setActive] = useState<"rain" | "lofi" | "silence">("silence");
+  const [active, setActive] = useState<"rain" | "music" | "silence">("silence");
   const ctxRef = useRef<AudioContext | null>(null);
   const nodesRef = useRef<AudioNode[]>([]);
+  const musicRef = useRef<HTMLAudioElement | null>(null);
 
   const stop = () => {
     nodesRef.current.forEach((n) => {
@@ -160,12 +162,26 @@ function useAmbient() {
       }
     });
     nodesRef.current = [];
+    if (musicRef.current) {
+      musicRef.current.pause();
+      musicRef.current.currentTime = 0;
+    }
   };
 
-  const play = (mode: "rain" | "lofi" | "silence") => {
+  const play = (mode: "rain" | "music" | "silence") => {
     stop();
     setActive(mode);
     if (mode === "silence") return;
+    if (mode === "music") {
+      if (!musicRef.current) {
+        const music = new Audio(rainyCafeVibes);
+        music.loop = true;
+        music.volume = 0.55;
+        musicRef.current = music;
+      }
+      void musicRef.current.play();
+      return;
+    }
     if (!ctxRef.current) {
       const Ctx =
         window.AudioContext ||
@@ -195,22 +211,6 @@ function useAmbient() {
       src.connect(bp1).connect(bp2).connect(gain).connect(audio.destination);
       src.start();
       nodesRef.current = [src];
-    } else if (mode === "lofi") {
-      const o1 = audio.createOscillator();
-      o1.type = "sine";
-      o1.frequency.value = 130;
-      const o2 = audio.createOscillator();
-      o2.type = "sine";
-      o2.frequency.value = 195;
-      const g1 = audio.createGain();
-      g1.gain.value = 0.04;
-      const g2 = audio.createGain();
-      g2.gain.value = 0.025;
-      o1.connect(g1).connect(audio.destination);
-      o2.connect(g2).connect(audio.destination);
-      o1.start();
-      o2.start();
-      nodesRef.current = [o1, o2];
     }
   };
 
@@ -390,10 +390,10 @@ function Index() {
           <CloudRain aria-hidden="true" size={17} strokeWidth={1.8} />
         </button>
         <button
-          className={`amb-btn ${active === "lofi" ? "active" : ""}`}
-          onClick={() => play("lofi")}
-          title="Lo-fi"
-          aria-label="Lo-fi sound"
+          className={`amb-btn ${active === "music" ? "active" : ""}`}
+          onClick={() => play("music")}
+          title="Rainy cafe music"
+          aria-label="Rainy cafe music"
         >
           <Headphones aria-hidden="true" size={17} strokeWidth={1.8} />
         </button>
